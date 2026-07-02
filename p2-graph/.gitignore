@@ -1,0 +1,35 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Database and sensitive files
+*.db
+.env
+*.pdf
+*.xls
+*.xlsx
+*.jpg
+*.jpeg
+*.png
+*.tiff
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# API keys
+*.key
+secrets.py
+config.py
+
+# Test data JSON files with real account data
+synthetic_dataset.json
+ground_truth.json
+demo_set_3_roundtrip_heavy.json
+findings_output.json
+cached_brief.txt
+uploads/
