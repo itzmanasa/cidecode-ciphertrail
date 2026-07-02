@@ -1,0 +1,80 @@
+{
+  "success": true,
+  "count": 9,
+  "accounts": [
+    {
+      "account_number": "564109504079",
+      "bank_name": "HDFC Bank",
+      "owner_name": "Rahul Sharma",
+      "period_from": "2025-01-01",
+      "period_to": "2025-06-30",
+      "source_file": "synthetic_564109504079.json"
+    },
+    {
+      "account_number": "261376855533",
+      "bank_name": "ICICI Bank",
+      "owner_name": "Priya Patel",
+      "period_from": "2025-01-01",
+      "period_to": "2025-06-30",
+      "source_file": "synthetic_261376855533.json"
+    },
+    {
+      "account_number": "255562214572",
+      "bank_name": "Axis Bank",
+      "owner_name": "Amit Singh",
+      "period_from": "2025-01-01",
+      "period_to": "2025-06-30",
+      "source_file": "synthetic_255562214572.json"
+    },
+    {
+      "account_number": "723374181253",
+      "bank_name": "Kotak Mahindra Bank",
+      "owner_name": "Amit Mehta",
+      "period_from": "2025-01-01",
+      "period_to": "2025-06-30",
+      "source_file": "synthetic_723374181253.json"
+    },
+    {
+      "account_number": "301111783655",
+      "bank_name": "Axis Bank",
+      "owner_name": "Karan Iyer",
+      "period_from": "2025-01-01",
+      "period_to": "2025-06-30",
+      "source_file": "synthetic_301111783655.json"
+    },
+    {
+      "account_number": "617311171635",
+      "bank_name": "Kotak Mahindra Bank",
+      "owner_name": "Rahul Gupta",
+      "period_from": "2025-01-01",
+      "period_to": "2025-06-30",
+      "source_file": "synthetic_617311171635.json"
+    },
+    {
+      "account_number": "837783949972",
+      "bank_name": "HDFC Bank",
+      "owner_name": "Anjali Singh",
+      "period_from": "2025-01-01",
+      "period_to": "2025-06-30",
+      "source_file": "synthetic_837783949972.json"
+    },
+    {
+      "account_number": "586992619750",
+      "bank_name": "IDFC First Bank",
+      "owner_name": "Vikram Patel",
+      "period_from": "2025-01-01",
+      "period_to": "2025-06-30",
+      "source_file": "synthetic_586992619750.json"
+    },
+    {
+      "account_number": "203713955189",
+      "bank_name": "HDFC Bank",
+      "owner_name": "Suspicious Kumar",
+      "period_from": "2025-01-01",
+      "period_to": "2025-06-30",
+      "source_file": "synthetic_203713955189.json"
+    }
+  ],
+  "_cached_at": "2026-07-02T11:58:38.680795",
+  "_is_cached": true
+}

@@ -1,0 +1,148 @@
+{
+  "round_trips": [
+    {
+      "pattern": "A_B_A",
+      "accounts": [
+        "602276804025",
+        "744287142271"
+      ],
+      "amount": 250000.0,
+      "hops": 2,
+      "start_date": "2025-01-31",
+      "end_date": "2025-02-02",
+      "days_elapsed": 2
+    },
+    {
+      "pattern": "A_B_C_A",
+      "accounts": [
+        "687593586857",
+        "988348136760",
+        "139656872032"
+      ],
+      "amount": 500000.0,
+      "hops": 3,
+      "start_date": "2025-03-02",
+      "end_date": "2025-03-03",
+      "days_elapsed": 1
+    },
+    {
+      "pattern": "A_B_C_D_A",
+      "accounts": [
+        "486117574539",
+        "016740395980",
+        "732107797516",
+        "319995413982"
+      ],
+      "amount": 1000000.0,
+      "hops": 4,
+      "start_date": "2025-04-01",
+      "end_date": "2025-04-01",
+      "hours_elapsed": 15.0
+    }
+  ],
+  "mule_accounts": [
+    {
+      "account_number": "407714528425",
+      "owner_name": "Meera Reddy",
+      "inflow_time": "2025-05-15T22:00:00",
+      "outflow_time": "2025-05-16T00:15:22.790711",
+      "hold_duration_hours": 2.26,
+      "amount": 251079.06,
+      "destination_account": "139656872032"
+    },
+    {
+      "account_number": "363842005507",
+      "owner_name": "Sneha Patel",
+      "inflow_time": "2025-05-19T18:00:00",
+      "outflow_time": "2025-05-19T18:44:18.688241",
+      "hold_duration_hours": 0.74,
+      "amount": 248706.98,
+      "destination_account": "948509899814"
+    },
+    {
+      "account_number": "802621954781",
+      "owner_name": "Arjun Iyer",
+      "inflow_time": "2025-04-18T18:00:00",
+      "outflow_time": "2025-04-18T21:38:10.352565",
+      "hold_duration_hours": 3.64,
+      "amount": 399587.45,
+      "destination_account": "988348136760"
+    },
+    {
+      "account_number": "480660781151",
+      "owner_name": "Vikram Verma",
+      "inflow_time": "2025-04-24T22:00:00",
+      "outflow_time": "2025-04-24T23:55:32.981623",
+      "hold_duration_hours": 1.93,
+      "amount": 340756.28,
+      "destination_account": "363842005507"
+    },
+    {
+      "account_number": "948509899814",
+      "owner_name": "Rohan Sharma",
+      "inflow_time": "2025-04-13T08:00:00",
+      "outflow_time": "2025-04-13T09:37:27.341205",
+      "hold_duration_hours": 1.62,
+      "amount": 393924.04,
+      "destination_account": "687593586857"
+    }
+  ],
+  "victim_accused_scenario": {
+    "victim_account": "039726776412",
+    "victim_name": "Pooja Joshi",
+    "accused_account": "019231103012",
+    "accused_name": "Suspicious Person",
+    "total_amount": 100000000.0,
+    "transfer_date": "2025-05-01",
+    "cash_withdrawal_total": 75527213.59,
+    "cheque_withdrawal_total": 24472786.41,
+    "remaining_in_account": 0.0,
+    "breakdown": [
+      {
+        "type": "CASH",
+        "amount": 11030971.2,
+        "date": "2025-05-03"
+      },
+      {
+        "type": "CASH",
+        "amount": 12263593.89,
+        "date": "2025-05-03"
+      },
+      {
+        "type": "CASH",
+        "amount": 15502919.1,
+        "date": "2025-05-11"
+      },
+      {
+        "type": "CASH",
+        "amount": 13199317.45,
+        "date": "2025-05-02"
+      },
+      {
+        "type": "CASH",
+        "amount": 18613296.68,
+        "date": "2025-05-02"
+      },
+      {
+        "type": "CHEQUE",
+        "amount": 13267294.3,
+        "date": "2025-05-03",
+        "cheque_no": 384686
+      },
+      {
+        "type": "CHEQUE",
+        "amount": 11205492.11,
+        "date": "2025-05-03",
+        "cheque_no": 925519
+      },
+      {
+        "type": "CASH",
+        "amount": 4917115.27,
+        "date": "2025-05-08"
+      }
+    ]
+  },
+  "total_accounts": 15,
+  "actual_total_transactions": 1843,
+  "actual_account_count": 16
+}
