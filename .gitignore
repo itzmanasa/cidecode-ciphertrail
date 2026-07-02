@@ -35,3 +35,9 @@ Thumbs.db
 /Primary/
 /Secondary/
 "@ | Out-File -FilePath .gitignore -Encoding utf8
+echo "*.pdf" >> .gitignore
+echo "*.xls" >> .gitignore
+echo "*.xlsx" >> .gitignore
+echo "forensic_audit.db" >> .gitignore
+echo "__pycache__/" >> .gitignore
+echo "cache/" >> .gitignore
