@@ -1,0 +1,37 @@
+@"
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+
+# Database
+forensic_audit.db
+
+# Temp uploads
+/tmp/
+
+# Environment
+.env
+.venv
+venv/
+ENV/
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Large test files (keep synthetic datasets but not real bank data)
+/Primary/
+/Secondary/
+"@ | Out-File -FilePath .gitignore -Encoding utf8
