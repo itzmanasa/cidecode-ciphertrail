@@ -1,0 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root { height: 100%; }
+
+body {
+  @apply bg-bg text-ink-900 antialiased;
+  background: radial-gradient(1200px 600px at 10% -10%, #EEF2FF 0%, #F8FAFC 45%, #F8FAFC 100%);
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+.glass {
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #EEF2FF 25%, #E0E7FF 37%, #EEF2FF 63%);
+  background-size: 700px 100%;
+  @apply animate-shimmer rounded-lg;
+}
