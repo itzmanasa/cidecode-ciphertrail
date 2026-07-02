@@ -1,28 +1,25 @@
 @"
-# Python
+# Python cache
 __pycache__/
-*.py[cod]
+*.pyc
 *.pyo
-*.pyd
-.Python
-*.egg-info/
-dist/
-build/
 
 # Database
 forensic_audit.db
 
-# Temp uploads
-/tmp/
+# Real bank statement files (never commit these)
+*.pdf
+*.xls
+*.xlsx
+*.jpg
+*.jpeg
+*.png
+*.tiff
 
-# Environment
+# Sensitive data
 .env
-.venv
-venv/
-ENV/
-
-# VS Code
-.vscode/
+Primary/
+Secondary/
 
 # OS
 .DS_Store
@@ -30,14 +27,4 @@ Thumbs.db
 
 # Logs
 *.log
-
-# Large test files (keep synthetic datasets but not real bank data)
-/Primary/
-/Secondary/
 "@ | Out-File -FilePath .gitignore -Encoding utf8
-echo "*.pdf" >> .gitignore
-echo "*.xls" >> .gitignore
-echo "*.xlsx" >> .gitignore
-echo "forensic_audit.db" >> .gitignore
-echo "__pycache__/" >> .gitignore
-echo "cache/" >> .gitignore
