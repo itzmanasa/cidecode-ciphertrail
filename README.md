@@ -236,30 +236,4 @@ Expected: all pass, no failures.
 
 ---
 
-## Hard questions (for judges)
 
-**Q: How do you handle a completely new bank format on the day?**
-A: The parser registry has a 9-parser cascade. Unknown formats hit the generic
-PDF text parser which dynamically maps column positions using 30+ keyword patterns.
-If that fails, OCR kicks in automatically. To add a new bank: write one class,
-add it to the registry. Takes about 15 minutes on-site.
-
-**Q: What if the same statement is uploaded twice?**
-A: Duplicate transactions are removed by exact (date + particulars + debit + credit + balance)
-hash. Re-uploading the same account overwrites the DB record cleanly.
-
-**Q: How do you prevent false positives in round-trip detection?**
-A: Only `SUCCESS` transactions feed the graph. FAILED/REVERSAL are excluded at
-parse time before any graph is built. Amount tolerance (Rs.50 / 2%) handles
-bank charges. Time window (3 days for cross-account, 30 days for intra-account)
-is configurable in `reversal_detector.py`.
-
-**Q: Is this court-admissible?**
-A: The parsed output is deterministic from the input file — same file always
-produces the same result. SHA-256 file hashing (P2's component) provides
-chain of custody. Output format follows forensic audit conventions under
-the Bharatiya Sakshya Adhiniyam (Indian Evidence Act 2023).
-
----
-
-*Built in 7 days by CideCode.*
