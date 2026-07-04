@@ -42,7 +42,8 @@ def init_db():
             bank_name TEXT,
             branch TEXT,
             account_number TEXT,
-            email TEXT
+            email TEXT,
+            ifsc TEXT
         );
 
         CREATE TABLE IF NOT EXISTS cases (
@@ -90,12 +91,13 @@ def save_transactions(case_id: str, df: pd.DataFrame):
     conn.close()
     print(f"Saved {len(df_to_save)} transactions for case {case_id}")
 
+
 def save_account_identity(case_id: str, statement: dict, file_name: str):
     """Persists account identity metadata so /analyse can return it."""
     conn = get_connection()
     conn.execute(
-        """INSERT INTO accounts (case_id, account_id, holder_name, bank_name, branch, account_number, email)
-           VALUES (?, ?, ?, ?, ?, ?, ?)""",
+        """INSERT INTO accounts (case_id, account_id, holder_name, bank_name, branch, account_number, email, ifsc)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
         (
             case_id,
             statement.get("account_number", "UNKNOWN"),
@@ -104,6 +106,7 @@ def save_account_identity(case_id: str, statement: dict, file_name: str):
             statement.get("branch"),
             statement.get("account_number", "UNKNOWN"),
             statement.get("email"),
+            statement.get("ifsc"),
         ),
     )
     conn.commit()
@@ -112,43 +115,28 @@ def save_account_identity(case_id: str, statement: dict, file_name: str):
 
 def load_account_identity(case_id: str) -> dict:
     conn = get_connection()
+
     row = conn.execute(
-        "SELECT * FROM accounts WHERE case_id = ? ORDER BY id DESC LIMIT 1", (case_id,)
+        "SELECT * FROM accounts WHERE case_id=? ORDER BY id DESC LIMIT 1",
+        (case_id,)
     ).fetchone()
+
     conn.close()
+
     if not row:
         return {}
-    return dict(row)
 
-def save_account_identity(case_id: str, statement: dict, file_name: str):
-    """Persists account identity metadata so /analyse can return it."""
-    conn = get_connection()
-    conn.execute(
-        """INSERT INTO accounts (case_id, account_id, holder_name, bank_name, branch, account_number, email)
-           VALUES (?, ?, ?, ?, ?, ?, ?)""",
-        (
-            case_id,
-            statement.get("account_number", "UNKNOWN"),
-            statement.get("owner_name", "UNKNOWN"),
-            statement.get("bank_name", "UNKNOWN"),
-            statement.get("branch"),
-            statement.get("account_number", "UNKNOWN"),
-            statement.get("email"),
-        ),
-    )
-    conn.commit()
-    conn.close()
+    data = dict(row)
 
-
-def load_account_identity(case_id: str) -> dict:
-    conn = get_connection()
-    row = conn.execute(
-        "SELECT * FROM accounts WHERE case_id = ? ORDER BY id DESC LIMIT 1", (case_id,)
-    ).fetchone()
-    conn.close()
-    if not row:
-        return {}
-    return dict(row)
+    return {
+        "account_holder": data.get("holder_name"),
+        "account_number": data.get("account_number"),
+        "bank": data.get("bank_name"),
+        "branch": data.get("branch"),
+        "ifsc": data.get("ifsc"),
+        "email": data.get("email"),
+        "upload_time": data.get("created_at"),
+    }
 
 def load_transactions(case_id: str) -> pd.DataFrame:
     """Loads transactions for a case from SQLite."""

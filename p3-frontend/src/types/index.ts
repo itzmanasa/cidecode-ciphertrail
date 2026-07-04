@@ -1,6 +1,26 @@
 // ---- Upload / Case ----
 export interface UploadResponse {
   case_id: string;
+  file_name?: string;
+  file_hash?: string;
+  total_transactions?: number;
+  reversals_found?: number;
+  account_id?: string;
+  owner_name?: string;
+  bank_name?: string;
+  period_from?: string;
+  period_to?: string;
+  audit?: {
+    duplicates_removed?: number;
+    balance_audit_clean?: boolean;
+    total_debit?: number;
+    total_credit?: number;
+    cash_withdrawal_count?: number;
+    cash_withdrawal_total?: number;
+    cheque_withdrawal_count?: number;
+    cheque_withdrawal_total?: number;
+  };
+  [key: string]: unknown;
 }
 
 export interface CaseSummary {

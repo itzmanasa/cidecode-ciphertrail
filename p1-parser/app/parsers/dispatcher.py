@@ -9,7 +9,7 @@ from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
-SUPPORTED_EXTENSIONS = {".pdf", ".csv", ".xlsx", ".xls", ".jpg", ".jpeg", ".png", ".tiff", ".tif"}
+SUPPORTED_EXTENSIONS = {".pdf", ".csv", ".xlsx", ".xls", ".jpg", ".jpeg", ".png", ".tiff", ".tif", ".txt"}
 
 
 def _peek_pdf_text(file_path: str) -> str:
@@ -33,6 +33,11 @@ def dispatch_parse(file_path: str) -> dict:
 
     if ext not in SUPPORTED_EXTENSIONS:
         raise ValueError(f"Unsupported file type: {ext}. Supported: {SUPPORTED_EXTENSIONS}")
+
+    # TXT files → dedicated fixed-width text parser (Kerala Gramin Bank, PNB, etc.)
+    if ext == ".txt":
+        from app.parsers.text_parser import parse_text_statement
+        return parse_text_statement(file_path)
 
     peek = _peek_pdf_text(file_path) if ext == ".pdf" else ""
 

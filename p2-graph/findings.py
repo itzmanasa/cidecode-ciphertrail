@@ -1,7 +1,7 @@
 import json
 from test_data import get_mock_transactions
 from graph_engine import build_transaction_graph, detect_round_trips, flag_suspicious_nodes
-from fifo_trail import trace_fifo_trail
+from fifo_trail import build_money_trail
 from analytics import generate_analytics
 from ai_brief import generate_investigation_brief
 
@@ -28,7 +28,7 @@ def get_full_findings(df) -> dict:
     fifo_trails = {}
     high_risk = [acc for acc, info in flags.items() if info["risk"] == "HIGH"]
     for account in high_risk:
-        fifo_trails[account] = trace_fifo_trail(df, account)
+        fifo_trails[account] = build_money_trail(df, account)
 
     # Step 6: Build verified findings for AI
     verified_findings = {

@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState, useCallback, useEffect } from "react";
 import ReactFlow, {
   Background,
   Controls,
@@ -74,8 +74,11 @@ export function MoneyFlowPage() {
   }, [allNodes, search, riskFilter]);
 
   const { rfNodes, rfEdges } = useMemo(() => buildFlow(filteredNodes, allEdges), [filteredNodes, allEdges]);
-  const [nodes, , onNodesChange] = useNodesState(rfNodes);
-  const [edges, , onEdgesChange] = useEdgesState(rfEdges);
+  const [nodes, setNodes, onNodesChange] = useNodesState(rfNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(rfEdges);
+
+  useEffect(() => { setNodes(rfNodes); }, [rfNodes]);
+  useEffect(() => { setEdges(rfEdges); }, [rfEdges]);
 
   const onNodeClick = useCallback(
     (_: unknown, node: Node) => {

@@ -7,7 +7,7 @@ import { Dropzone } from "../components/upload/Dropzone";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui/Card";
 import { Badge } from "../components/ui/Badge";
 import { EmptyState } from "../components/ui/EmptyState";
-import { uploadStatement } from "../api/endpoints";
+import { uploadMultipleStatements } from "../api/endpoints";
 import { useCase } from "../context/CaseContext";
 import { useCases } from "../hooks/useCases";
 import { useAuth } from "../context/AuthContext";
@@ -30,7 +30,7 @@ export function UploadPage() {
   };
 
   const mutation = useMutation({
-    mutationFn: (file: File) => uploadStatement(file, setProgress),
+    mutationFn: (files: File[]) => uploadMultipleStatements(files, setProgress),
     onSuccess: (data) => {
       setCaseId(data.case_id);
       navigate("/dashboard");
@@ -74,9 +74,9 @@ export function UploadPage() {
       </motion.div>
 
       <Dropzone
-        onFileSelected={(file) => {
+        onFilesSelected={(files) => {
           setProgress(0);
-          mutation.mutate(file);
+          mutation.mutate(files);
         }}
         uploading={mutation.isPending}
         progress={progress}

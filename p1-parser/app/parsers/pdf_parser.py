@@ -223,12 +223,25 @@ def _extract_metadata_from_text(full_text: str) -> dict:
             break
 
     # IFSC
+    # ---------------- IFSC ----------------
     m = re.search(r"\b([A-Z]{4}0[A-Z0-9]{6})\b", full_text)
     if m:
         meta["ifsc"] = m.group(1)
 
-    # Email
-    m = re.search(r"[\w.\-]+@[\w.\-]+\.\w{2,}", full_text)
+    # ---------------- Branch ----------------
+    branch_match = re.search(
+        r"ACCOUNT\s*:\s*([A-Z\s]+?BRANCH)",
+        full_text,
+        re.IGNORECASE,
+    )
+
+    if branch_match:
+        meta["branch"] = " ".join(branch_match.group(1).split()).strip()
+        
+        
+
+    # Email (supports masked emails like z********2@gmail.com)
+    m = re.search(r"[A-Za-z0-9*._-]+@[A-Za-z0-9.-]+\.\w{2,}", full_text)
     if m:
         meta["email"] = m.group(0)
 
@@ -280,6 +293,104 @@ def _extract_metadata_from_text(full_text: str) -> dict:
     name_match = re.search(r"(?:name|account\s*holder)[:\s]+([A-Z][A-Za-z\s]{3,50})", full_text,re.IGNORECASE)
     if name_match:
         meta["owner_name"] = name_match.group(1).strip()
+    if meta["owner_name"] == "UNKNOWN":
+        lines = [line.strip() for line in full_text.splitlines()]
+
+        for i, line in enumerate(lines):
+            if "STATEMENT OF ACCOUNT" in line.upper():
+                for candidate in lines[i + 1:i + 20]:
+
+                    candidate = candidate.strip()
+
+                    if (
+                        candidate.isupper()
+                        and len(candidate.split()) >= 2
+                        and "CUSTOMER" not in candidate
+                        and "ACCOUNT" not in candidate
+                        and "STATEMENT" not in candidate
+                        and ":" not in candidate
+                    ):
+                        meta["owner_name"] = candidate
+                        break
+
+                if meta["owner_name"] != "UNKNOWN":
+                    lines = [line.strip() for line in full_text.splitlines()]
+
+                    for i, line in enumerate(lines):
+                        if "STATEMENT OF ACCOUNT" in line.upper():
+                            for candidate in lines[i + 1:i + 20]:
+
+                                candidate = candidate.strip()
+
+                                if (
+                                    candidate.isupper()
+                                    and len(candidate.split()) >= 2
+                                    and "CUSTOMER" not in candidate
+                                    and "ACCOUNT" not in candidate
+                                    and "STATEMENT" not in candidate
+                                    and ":" not in candidate
+                                ):
+                                    meta["owner_name"] = candidate
+                                    break
+
+                                if meta["owner_name"] == "UNKNOWN":
+                                    lines = [line.strip() for line in full_text.splitlines()]
+
+                                    for i, line in enumerate(lines):
+                                        if "STATEMENT OF ACCOUNT" in line.upper():
+                                            for candidate in lines[i + 1:i + 20]:
+
+                                                candidate = candidate.strip()
+
+                                                if (
+                                                    candidate.isupper()
+                                                    and len(candidate.split()) >= 2
+                                                    and "CUSTOMER" not in candidate
+                                                    and "ACCOUNT" not in candidate
+                                                    and "STATEMENT" not in candidate
+                                                    and ":" not in candidate
+                                                ):
+                                                    meta["owner_name"] = candidate
+                                                    break
+
+                                            if meta["owner_name"] != "UNKNOWN":
+                                                break
+
+                                # ---------- TEMP DEBUG ----------
+                                print("=" * 80)
+                                print("TEXT AROUND STATEMENT OF ACCOUNT")
+
+                                idx = full_text.upper().find("STATEMENT OF ACCOUNT")
+
+                                if idx != -1:
+                                    start = max(0, idx - 200)
+                                    end = min(len(full_text), idx + 800)
+                                    print(full_text[start:end])
+                                else:
+                                    print("STATEMENT OF ACCOUNT not found")
+                                    print(full_text[:1000])
+
+                                print("=" * 80)
+                                # ---------- END DEBUG ----------
+
+                                return meta
+
+    # ---------- TEMP DEBUG ----------
+    print("=" * 80)
+    print("TEXT AROUND STATEMENT OF ACCOUNT")
+
+    idx = full_text.upper().find("STATEMENT OF ACCOUNT")
+
+    if idx != -1:
+        start = max(0, idx - 200)
+        end = min(len(full_text), idx + 800)
+        print(full_text[start:end])
+    else:
+        print("STATEMENT OF ACCOUNT not found")
+        print(full_text[:1000])
+
+    print("=" * 80)
+    # ---------- END DEBUG ----------
 
     return meta
 

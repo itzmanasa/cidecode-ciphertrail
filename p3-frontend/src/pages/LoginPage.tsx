@@ -5,7 +5,7 @@ import { Eye, EyeOff, ShieldCheck, Lock, Mail, Wand2, Loader2 } from "lucide-rea
 import { useAuth, DEMO_CREDENTIALS } from "../context/AuthContext";
 import { Button } from "../components/ui/Button";
 import { Badge } from "../components/ui/Badge";
-import heroImg from "../assets/hero.png";
+//import heroImg from "../assets/hero.png";
 
 export function LoginPage() {
   const { login, isAuthenticated } = useAuth();
@@ -64,8 +64,12 @@ export function LoginPage() {
           transition={{ duration: 0.5 }}
           className="relative z-10 flex flex-1 items-center justify-center py-8"
         >
-          <img src={heroImg} alt="" className="max-h-[340px] w-auto drop-shadow-2xl select-none" />
+          <div className="flex flex-col items-center gap-4 text-white/40">
+            <ShieldCheck className="h-24 w-24" />
+            <p className="text-sm font-medium">CipherTrail</p>
+          </div>
         </motion.div>
+          {/* <img src={heroImg} alt="" className="max-h-[340px] w-auto drop-shadow-2xl select-none" /> */}
 
         <div className="relative z-10 max-w-md">
           <Badge tone="neutral" className="bg-white/15 text-white ring-white/20 mb-3">

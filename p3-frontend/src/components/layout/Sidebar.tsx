@@ -11,12 +11,14 @@ import {
   ChevronsLeft,
   ChevronsRight,
   ShieldCheck,
+  GitBranch,
 } from "lucide-react";
 import { cn } from "../../utils/cn";
 
 const NAV_ITEMS = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/money-flow", label: "Money Flow", icon: Network },
+  { to: "/money-trail", label: "Money Trail", icon: GitBranch },
   { to: "/round-tripping", label: "Round Tripping", icon: Repeat },
   { to: "/findings", label: "Investigation Findings", icon: ShieldAlert },
   { to: "/transactions", label: "Transactions", icon: Receipt },

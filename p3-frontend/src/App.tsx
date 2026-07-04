@@ -11,6 +11,7 @@ import { EvidenceReportPage } from "./pages/EvidenceReportPage";
 import { CasesPage } from "./pages/CasesPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
+import { MoneyTrailPage } from "./pages/MoneyTrailPage";
 
 export default function App() {
   return (
@@ -40,6 +41,7 @@ export default function App() {
           <Route path="/transactions" element={<TransactionsPage />} />
           <Route path="/evidence-report" element={<EvidenceReportPage />} />
           <Route path="/cases" element={<CasesPage />} />
+          <Route path="/money-trail" element={<MoneyTrailPage />} />
           <Route path="/settings" element={<SettingsPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/upload" replace />} />

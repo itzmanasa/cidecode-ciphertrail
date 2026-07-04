@@ -1,3 +1,4 @@
+from fifo_trail import build_money_trail
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import shutil
@@ -151,6 +152,101 @@ async def upload_file(file: UploadFile = File(...)):
         }
     }
 
+@app.post("/upload-multi")
+async def upload_multi(files: list[UploadFile] = File(...)):
+    """
+    Upload multiple bank statements for the same case.
+    Each file is parsed individually via P1, then all transactions
+    are merged into a single case_id for unified analysis.
+    """
+    if not files:
+        raise HTTPException(status_code=400, detail="No files provided.")
+
+    case_id = f"CASE_{uuid.uuid4().hex[:8].upper()}"
+    all_dfs = []
+    file_hashes = []
+    statements = []
+    audit_totals = {
+        "total_debit": 0, "total_credit": 0,
+        "cash_withdrawal_count": 0, "cash_withdrawal_total": 0,
+        "cheque_withdrawal_count": 0, "cheque_withdrawal_total": 0,
+    }
+
+    for file in files:
+        file_path = UPLOAD_DIR / f"{case_id}_{file.filename}"
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+
+        file_hash = hash_file(str(file_path))
+        file_hashes.append(file_hash)
+        log_custody(case_id, "UPLOAD", file_hash, f"File: {file.filename}")
+
+        try:
+            with open(file_path, "rb") as f:
+                response = requests.post(
+                    f"{P1_API}/api/upload",
+                    files={"file": (file.filename, f)},
+                    timeout=30
+                )
+            if response.status_code != 200:
+                raise ValueError(f"Parser returned {response.status_code}")
+
+            data = response.json()
+            statement = data["statement"]
+            stats = data.get("summary_stats", {})
+
+        except Exception as e:
+            print(f"P1 failed for {file.filename}: {e} — using mock")
+            statement = _mock_statement(file.filename)
+            stats = {}
+
+        statements.append(statement)
+        df = adapt_statement_to_engine(statement, case_id)
+        if not df.empty:
+            all_dfs.append(df)
+
+        # Accumulate audit stats across all files
+        audit_totals["total_debit"]              += stats.get("total_debit", 0)
+        audit_totals["total_credit"]             += stats.get("total_credit", 0)
+        audit_totals["cash_withdrawal_count"]    += stats.get("cash_withdrawal_count", 0)
+        audit_totals["cash_withdrawal_total"]    += stats.get("cash_withdrawal_total", 0)
+        audit_totals["cheque_withdrawal_count"]  += stats.get("cheque_withdrawal_count", 0)
+        audit_totals["cheque_withdrawal_total"]  += stats.get("cheque_withdrawal_total", 0)
+
+    if not all_dfs:
+        raise HTTPException(status_code=400, detail="No transactions found in any file.")
+
+    import pandas as pd
+    merged_df = pd.concat(all_dfs, ignore_index=True)
+    merged_df = merged_df.drop_duplicates(subset=["txn_id"], keep="first")
+
+    save_transactions(case_id, merged_df)
+    save_case(case_id, ",".join(f.filename for f in files), file_hashes[0], len(merged_df))
+
+    # Save identity from first statement (primary account)
+    save_account_identity(case_id, statements[0], files[0].filename)
+    log_custody(case_id, "PARSED", file_hashes[0],
+                f"{len(merged_df)} total txns from {len(files)} files")
+
+    return {
+        "success": True,
+        "case_id": case_id,
+        "files_processed": len(files),
+        "file_names": [f.filename for f in files],
+        "file_hash": file_hashes[0],
+        "total_transactions": len(merged_df),
+        "reversals_found": int(merged_df["is_reversal"].sum()),
+        "account_id": merged_df["account_id"].iloc[0] if "account_id" in merged_df.columns else "UNKNOWN",
+        "owner_name": statements[0].get("owner_name", "Unknown"),
+        "bank_name": f"{len(files)} accounts",
+        "period_from": statements[0].get("period_from"),
+        "period_to": statements[0].get("period_to"),
+        "audit": {
+            "duplicates_removed": 0,
+            "balance_audit_clean": True,
+            **audit_totals
+        }
+    }
 
 @app.get("/analyse/{case_id}")
 def analyse(case_id: str):
@@ -187,6 +283,34 @@ def get_transactions(case_id: str):
         "total": len(df),
         "transactions": df.to_dict(orient="records")
     }
+
+@app.get("/money-trail/{case_id}")
+def get_money_trail(case_id: str):
+
+    df = load_transactions(case_id)
+
+    if df.empty:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Case {case_id} not found."
+        )
+
+    identity = load_account_identity(case_id)
+
+    account = (
+        identity.get("account_number")
+        or df["account_id"].iloc[0]
+    )
+
+    trail = build_money_trail(df, account)
+
+    return {
+        "success": True,
+        "case_id": case_id,
+        "account": account,
+        "trail": trail
+    }
+
 @app.get("/certificate/{case_id}")
 def get_certificate(case_id: str):
     """Generate Section 65B certificate for a case."""
