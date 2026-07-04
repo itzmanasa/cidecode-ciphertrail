@@ -1,0 +1,30 @@
+@"
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Database
+forensic_audit.db
+
+# Real bank statement files (never commit these)
+*.pdf
+*.xls
+*.xlsx
+*.jpg
+*.jpeg
+*.png
+*.tiff
+
+# Sensitive data
+.env
+Primary/
+Secondary/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+"@ | Out-File -FilePath .gitignore -Encoding utf8
