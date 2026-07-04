@@ -220,19 +220,7 @@ CIDECODE/
 
 ---
 
-## Running all tests before the hackathon
 
-```bash
-python test_day2.py              # Reversal detection basic
-python test_day3.py              # Registry + audit modes
-python test_day4.py              # SQLite + synthetic dataset + performance
-python test_day5.py              # Edge cases + multi-upload merge
-python test_day6.py              # Full regression + FIFO unit tests
-python test_fifo_and_reversal.py # 19 FIFO unit tests
-python test_performance.py       # 10k rows under 60 seconds
-```
-
-Expected: all pass, no failures.
 
 ---
 
