@@ -277,7 +277,7 @@ def _extract_metadata_from_text(full_text: str) -> dict:
         meta["opening_balance"] = _parse_amount(ob_match.group(1))
 
     # Owner name — typically after "Name:" or first capitalized line
-    name_match = re.search(r"(?:name|account\s*holder)[:\s]+([A-Z][A-Za-z\s]{3,50})", full_text)
+    name_match = re.search(r"(?:name|account\s*holder)[:\s]+([A-Z][A-Za-z\s]{3,50})", full_text,re.IGNORECASE)
     if name_match:
         meta["owner_name"] = name_match.group(1).strip()
 

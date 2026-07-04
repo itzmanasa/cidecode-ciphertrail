@@ -1,8 +1,11 @@
 import { motion } from "framer-motion";
-import CountUp from "react-countup";
+import * as ReactCountUp from "react-countup";
 import { Card } from "./Card";
 import { cn } from "../../utils/cn";
 import type { ReactNode } from "react";
+
+const CountUpModule = ReactCountUp as any;
+const CountUp = CountUpModule.default?.default ?? CountUpModule.default ?? CountUpModule;
 
 export function StatCard({
   label,

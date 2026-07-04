@@ -38,13 +38,22 @@ def generate_analytics(df: pd.DataFrame) -> dict:
     top_accounts["total_flow"] = top_accounts["total_sent"] + top_accounts["total_received"]
     top_accounts = top_accounts.sort_values("total_flow", ascending=False)
 
+    total_debit = float(clean["debit"].sum()) if "debit" in clean.columns else float(clean[clean["txn_type"] == "DEBIT"]["amount"].sum())
+    total_credit = float(clean["credit"].sum()) if "credit" in clean.columns else float(clean[clean["txn_type"] == "CREDIT"]["amount"].sum())
+
     return {
         "total_transactions": len(df),
         "clean_transactions": len(clean),
         "reversal_count": len(reversals),
         "reversal_amount": float(reversals["amount"].sum()) if len(reversals) else 0,
         "total_amount_moved": float(clean["amount"].sum()),
-
+        "total_debit": total_debit,
+        "total_credit": total_credit,
+        "net_flow": total_credit - total_debit,
+        "failed_transactions": int((df["status"] == "FAILED").sum()) if "status" in df.columns else 0,
+        "reversal_transactions": len(reversals),
+        "cash_withdrawals": int(len(cash)),
+        "cheque_withdrawals": int(len(cheque)),
         "cash_withdrawals": {
             "count": int(len(cash)),
             "total_amount": float(cash["amount"].sum())

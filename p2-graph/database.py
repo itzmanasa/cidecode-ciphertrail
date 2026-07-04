@@ -28,6 +28,9 @@ def init_db():
             narration TEXT,
             is_reversal INTEGER DEFAULT 0,
             txn_type TEXT,
+            debit REAL,
+            credit REAL,
+            status TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
 
@@ -80,13 +83,72 @@ def save_transactions(case_id: str, df: pd.DataFrame):
     # adapter.py adds extra columns (debit, credit, balance, status, etc.)
     # that aren't part of this table's schema, so filter them out here.
     allowed_cols = ["case_id", "txn_id", "date", "from_account", "to_account",
-                     "amount", "narration", "is_reversal", "txn_type"]
+                     "amount", "narration", "is_reversal", "txn_type", "debit", "credit", "status"  ]
     df_to_save = df[[c for c in allowed_cols if c in df.columns]]
 
     df_to_save.to_sql("transactions", conn, if_exists="append", index=False)
     conn.close()
     print(f"Saved {len(df_to_save)} transactions for case {case_id}")
 
+def save_account_identity(case_id: str, statement: dict, file_name: str):
+    """Persists account identity metadata so /analyse can return it."""
+    conn = get_connection()
+    conn.execute(
+        """INSERT INTO accounts (case_id, account_id, holder_name, bank_name, branch, account_number, email)
+           VALUES (?, ?, ?, ?, ?, ?, ?)""",
+        (
+            case_id,
+            statement.get("account_number", "UNKNOWN"),
+            statement.get("owner_name", "UNKNOWN"),
+            statement.get("bank_name", "UNKNOWN"),
+            statement.get("branch"),
+            statement.get("account_number", "UNKNOWN"),
+            statement.get("email"),
+        ),
+    )
+    conn.commit()
+    conn.close()
+
+
+def load_account_identity(case_id: str) -> dict:
+    conn = get_connection()
+    row = conn.execute(
+        "SELECT * FROM accounts WHERE case_id = ? ORDER BY id DESC LIMIT 1", (case_id,)
+    ).fetchone()
+    conn.close()
+    if not row:
+        return {}
+    return dict(row)
+
+def save_account_identity(case_id: str, statement: dict, file_name: str):
+    """Persists account identity metadata so /analyse can return it."""
+    conn = get_connection()
+    conn.execute(
+        """INSERT INTO accounts (case_id, account_id, holder_name, bank_name, branch, account_number, email)
+           VALUES (?, ?, ?, ?, ?, ?, ?)""",
+        (
+            case_id,
+            statement.get("account_number", "UNKNOWN"),
+            statement.get("owner_name", "UNKNOWN"),
+            statement.get("bank_name", "UNKNOWN"),
+            statement.get("branch"),
+            statement.get("account_number", "UNKNOWN"),
+            statement.get("email"),
+        ),
+    )
+    conn.commit()
+    conn.close()
+
+
+def load_account_identity(case_id: str) -> dict:
+    conn = get_connection()
+    row = conn.execute(
+        "SELECT * FROM accounts WHERE case_id = ? ORDER BY id DESC LIMIT 1", (case_id,)
+    ).fetchone()
+    conn.close()
+    if not row:
+        return {}
+    return dict(row)
 
 def load_transactions(case_id: str) -> pd.DataFrame:
     """Loads transactions for a case from SQLite."""

@@ -5,13 +5,12 @@ import hashlib
 import uuid
 import os
 import requests
-from database import get_connection
+from database import get_connection, load_account_identity, save_account_identity
 from pathlib import Path
 
 from adapter import adapt_statement_to_engine
 from findings import get_full_findings
-from database import init_db, save_transactions, save_case, log_custody, load_transactions, get_all_cases
-
+from database import init_db, save_transactions, save_case, log_custody, load_transactions, get_all_cases, save_account_identity, load_account_identity
 app = FastAPI(title="CipherTrail API", version="1.0.0")
 
 app.add_middleware(
@@ -122,6 +121,7 @@ async def upload_file(file: UploadFile = File(...)):
 
     save_transactions(case_id, df)
     save_case(case_id, file.filename, file_hash, len(df))
+    save_account_identity(case_id, statement, file.filename)
     log_custody(
         case_id, "PARSED", file_hash,
         f"{len(df)} transactions, {int(df['is_reversal'].sum())} reversals"
@@ -161,6 +161,7 @@ def analyse(case_id: str):
 
     log_custody(case_id, "ANALYSE", "", "Full analysis triggered")
     results = get_full_findings(df)
+    results["identity"] = load_account_identity(case_id)
 
     return {
         "success": True,
