@@ -1,4 +1,5 @@
 import json
+from sys import flags
 from test_data import get_mock_transactions
 from graph_engine import build_transaction_graph, detect_round_trips, flag_suspicious_nodes
 from fifo_trail import build_money_trail
@@ -24,10 +25,16 @@ def get_full_findings(df) -> dict:
     # Step 4: Flag suspicious nodes
     flags = flag_suspicious_nodes(G, round_trips)
 
-    # Step 5: FIFO trail for all high risk accounts
+    # Step 5: FIFO trail for all accounts
     fifo_trails = {}
-    high_risk = [acc for acc, info in flags.items() if info["risk"] == "HIGH"]
-    for account in high_risk:
+
+    accounts = [
+        acc
+        for acc, info in flags.items()
+        if info["risk"] in ("HIGH", "MEDIUM")
+    ]
+
+    for account in accounts:
         fifo_trails[account] = build_money_trail(df, account)
 
     # Step 6: Build verified findings for AI
@@ -47,7 +54,7 @@ def get_full_findings(df) -> dict:
             }
             for rt in round_trips[:3]
         ],
-        "high_risk_accounts": high_risk,
+        "high_risk_accounts": accounts,
         "cash_withdrawals": stats["cash_withdrawals"],
         "reversal_count": stats["reversal_count"],
         "reversal_amount": stats["reversal_amount"]

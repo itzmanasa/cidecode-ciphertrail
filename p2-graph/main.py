@@ -1,4 +1,4 @@
-from fifo_trail import build_money_trail
+from fifo_trail import trace_fifo_trail, trace_all_suspicious_accounts
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import shutil
@@ -255,15 +255,22 @@ def analyse(case_id: str):
     if df.empty:
         raise HTTPException(status_code=404, detail=f"Case {case_id} not found.")
 
-    log_custody(case_id, "ANALYSE", "", "Full analysis triggered")
-    results = get_full_findings(df)
-    results["identity"] = load_account_identity(case_id)
+    try:
+        log_custody(case_id, "ANALYSE", "", "Full analysis triggered")
 
-    return {
-        "success": True,
-        "case_id": case_id,
-        "findings": results
-    }
+        results = get_full_findings(df)
+        results["identity"] = load_account_identity(case_id)
+
+        return {
+            "success": True,
+            "case_id": case_id,
+            "findings": results,
+        }
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.get("/cases")
@@ -286,21 +293,14 @@ def get_transactions(case_id: str):
 
 @app.get("/money-trail/{case_id}")
 def get_money_trail(case_id: str):
+    from fifo_trail import build_money_trail
 
     df = load_transactions(case_id)
-
     if df.empty:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Case {case_id} not found."
-        )
+        raise HTTPException(status_code=404, detail=f"Case {case_id} not found.")
 
     identity = load_account_identity(case_id)
-
-    account = (
-        identity.get("account_number")
-        or df["account_id"].iloc[0]
-    )
+    account = identity.get("account_number") or df["account_id"].iloc[0]
 
     trail = build_money_trail(df, account)
 
@@ -384,6 +384,8 @@ def download_evidence_package(case_id: str):
         media_type="application/zip",
         filename=f"evidence_{case_id}.zip"
     )
+
+
 
 if __name__ == "__main__":
     import uvicorn
