@@ -129,8 +129,9 @@ function normaliseAnalysis(raw: any, uploadMeta?: any): AnalyseResponse {
       round_trips: (f.round_trips ?? []).map((rt: any, i: number) => ({
         ...rt,
         loop_id:      rt.loop_id        ?? rt.id             ?? `LOOP_${i + 1}`,
-        accounts:     rt.accounts       ?? rt.nodes          ?? rt.path ?? [],
-        amount:       rt.amount         ?? rt.total_amount   ?? 0,
+        accounts: rt.accounts ?? rt.nodes ?? rt.path ?? 
+          (rt.cycle_str ? rt.cycle_str.replace(/ /g, "").split("→") : 
+          (rt.chain ? rt.chain.replace(/ /g, "").split("→") : [])),        amount:       rt.amount         ?? rt.total_amount   ?? 0,
         hop_count:    rt.hop_count      ?? rt.hops           ?? (rt.accounts ?? rt.nodes ?? rt.path ?? []).length,
         risk:         (rt.risk          ?? "high").toLowerCase(),
         timeline:     rt.timeline       ?? [],
