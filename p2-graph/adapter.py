@@ -27,8 +27,16 @@ def extract_counterparty(particulars: str, txn_type: str) -> str:
         return "ATM_WITHDRAWAL"
 
     # Cheque
+    # Cheque bounce/return — treat as a separate counterparty from normal cheque
+    if ("CHQ" in p or "CHEQUE" in p) and ("BOUNCE" in p or "RETURN" in p or "DISHONOUR" in p):
+        chq_match = re.search(r"CHQ\s*(?:DEPOSIT\s*BOUNCE|BOUNCE)[/\s]+(\d+)", p)
+        ref = chq_match.group(1) if chq_match else "UNKNOWN"
+        return f"CHQ_BOUNCE_{ref}"
+
     if "CHQ" in p or "CHEQUE" in p:
-        return "CHEQUE_PAYMENT"
+        chq_match = re.search(r"(?:CHQ|CHEQUE)[/\s]+(\d+)", p)
+        ref = chq_match.group(1) if chq_match else "UNKNOWN"
+        return f"CHEQUE_{ref}"
 
     # Cash
     if "CASH" in p:
